@@ -1,0 +1,8 @@
+Django>=5.0
+djangorestframework
+djangorestframework-simplejwt
+python-dotenv
+Pillow
+reportlab
+psycopg2-binary
+drf-yasg

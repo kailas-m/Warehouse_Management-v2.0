@@ -1,0 +1,112 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+
+# Environment variables
+.env
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# =========================
+# Python / Django
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+.env
+.env.*
+.env.local
+.env.production
+
+# =========================
+# Django specific
+# =========================
+db.sqlite3
+local_settings.py
+
+# =========================
+# Media & Uploaded Files
+# =========================
+media/
+uploads/
+
+# =========================
+# Collected Static Files
+# =========================
+staticfiles/
+static/
+
+# =========================
+# Reports / Generated PDFs
+# =========================
+*.pdf
+*.xlsx
+*.csv
+
+# =========================
+# Email / Cache
+# =========================
+*.eml
+.cache/
+
+# =========================
+# Migrations (optional – keep if needed)
+# =========================
+# Uncomment if you want to ignore auto migrations
+migrations/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# IDEs & Editors
+# =========================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# =========================
+# Logs & Temp
+# =========================
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# =========================
+# Node (if frontend added later)
+# =========================
+node_modules/
+dist/
+build/
