@@ -19,6 +19,9 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from datetime import datetime, timedelta
 from collections import defaultdict
 
+# Core constants
+from core.constants import DEFAULT_LOW_STOCK_THRESHOLD
+
 
 # Project utilities
 
@@ -1766,6 +1769,8 @@ class AdminDashboardAPIView(APIView):
             total_qty = 0
             total_value = 0
             low_count = 0
+            product_count = stocks.values('product').distinct().count()  # Count unique products
+            
             for s in stocks:
                 q = int(getattr(s, "quantity", 0) or 0)
                 total_qty += q
@@ -1775,12 +1780,12 @@ class AdminDashboardAPIView(APIView):
                         total_value += q * float(price)
                     except Exception:
                         total_value += 0
-                # threshold: prefer per-stock min_required_quantity if present, else default 10
+                # threshold: prefer per-stock min_required_quantity if present, else default
                 threshold = getattr(s, "min_required_quantity", None)
                 if threshold is None:
                     threshold = getattr(s, "threshold", None)
                 if threshold is None:
-                    threshold = int(request.query_params.get("default_threshold", 10))
+                    threshold = int(request.query_params.get("default_threshold", DEFAULT_LOW_STOCK_THRESHOLD))
                 if q <= int(threshold):
                     low_count += 1
 
@@ -1789,6 +1794,7 @@ class AdminDashboardAPIView(APIView):
                 "name": w.name,
                 "total_quantity": total_qty,
                 "total_value": int(total_value),
+                "product_count": product_count,
                 "low_stock_count": low_count,
                 "manager": getattr(w.manager, "user_id", None) if getattr(w, "manager", None) else None,
             })
@@ -1962,6 +1968,11 @@ class AdminDashboardAPIView(APIView):
                 "net_changes": net_changes
             },
             "warehouse_comparison": warehouse_list,
+            "chart_data": {
+                "warehouse_stock": [{"name": w["name"], "quantity": w["total_quantity"]} for w in warehouse_list[:10]],
+                "warehouse_value": [{"name": w["name"], "value": w["total_value"]} for w in sorted(warehouse_list, key=lambda x: x["total_value"], reverse=True)[:10]],
+                "warehouse_products": [{"name": w["name"], "products": w["product_count"]} for w in sorted(warehouse_list, key=lambda x: x["product_count"], reverse=True)[:10]],
+            },
             "movement_history": movement_history,
         }
 
@@ -2067,7 +2078,7 @@ class WarehouseDashboardAPIView(APIView):
             q = int(getattr(s, "quantity", 0) or 0)
             total_stock_units += q
             
-            threshold = thresholds_map.get(s.product_id, 10)  # default 10
+            threshold = thresholds_map.get(s.product_id, DEFAULT_LOW_STOCK_THRESHOLD)  # default threshold
             
             if q < threshold:
                 low_stock_count += 1
@@ -2147,6 +2158,31 @@ class WarehouseDashboardAPIView(APIView):
             status=TransferRequest.STATUS_APPROVED
         ).aggregate(total=Sum('quantity'))['total'] or 0
 
+        # ---- Prepare chart data for visualization ----
+        # Build list of products with quantity and value
+        product_data = []
+        for s in stocks:
+            q = int(getattr(s, "quantity", 0) or 0)
+            price = getattr(s.product, "price", None)
+            value = 0
+            if price is not None:
+                try:
+                    value = q * float(price)
+                except Exception:
+                    value = 0
+            
+            product_data.append({
+                "name": s.product.name,
+                "quantity": q,
+                "value": int(value)
+            })
+        
+        # Sort and get top 10 by quantity
+        top_by_quantity = sorted(product_data, key=lambda x: x["quantity"], reverse=True)[:10]
+        
+        # Sort and get top 10 by value
+        top_by_value = sorted(product_data, key=lambda x: x["value"], reverse=True)[:10]
+
         return Response({
             "stats": {
                 "total_products": total_products,
@@ -2163,6 +2199,10 @@ class WarehouseDashboardAPIView(APIView):
             },
             "low_stock_items": low_alerts,  # Use same field name as AdminDashboard
             "recent_purchase_requests": recent_purchase_requests_list,
+            "chart_data": {
+                "top_products_quantity": [{"name": p["name"], "quantity": p["quantity"]} for p in top_by_quantity],
+                "top_products_value": [{"name": p["name"], "value": p["value"]} for p in top_by_value],
+            },
             "movement_history": {
                 "page": page,
                 "page_size": page_size,

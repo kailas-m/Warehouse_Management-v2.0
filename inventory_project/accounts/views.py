@@ -31,6 +31,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
+
 class RegisterAPIView(APIView):
     authentication_classes = []
     permission_classes = []
@@ -52,6 +53,159 @@ class RegisterAPIView(APIView):
             log_error(traceback.format_exc())
             # Return the error to the frontend so it can display it
             return Response(str(e), status=500)
+
+
+class CustomLoginAPIView(APIView):
+    """
+    Custom login endpoint with audit logging, scope resolution, and structured response.
+    Replaces the default SimpleJWT token view for enhanced security and UX.
+    """
+    authentication_classes = []
+    permission_classes = []
+    
+    def post(self, request):
+        from django.contrib.auth import authenticate
+        from rest_framework_simplejwt.tokens import RefreshToken
+        from accounts.serializers import CustomLoginSerializer
+        from core.utils import log_auth_attempt
+        from audit.models import AuthAuditLog
+        
+        # Validate input
+        serializer = CustomLoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"error": "Invalid request data"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+        
+        # Authenticate user
+        user = authenticate(username=username, password=password)
+        
+        if user is None:
+            # Log failed attempt
+            log_auth_attempt(
+                username=username,
+                status=AuthAuditLog.STATUS_FAILURE,
+                request=request,
+                user=None,
+                failure_reason="Invalid credentials"
+            )
+            return Response(
+                {"error": "Invalid credentials"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        # Check if account is active
+        if not user.is_active:
+            log_auth_attempt(
+                username=username,
+                status=AuthAuditLog.STATUS_LOCKED,
+                request=request,
+                user=user,
+                failure_reason="Account inactive"
+            )
+            return Response(
+                {"error": "Account is disabled. Please contact an administrator."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+        
+        # Update last login
+        update_last_login(None, user)
+        
+        # Resolve user scope based on role
+        scope_data = self._resolve_user_scope(user)
+        
+        # Build user data
+        user_data = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role.name if user.role else None,
+            "is_active": user.is_active,
+        }
+        
+        # Add profile data if exists
+        try:
+            profile = user.profile
+            user_data["full_name"] = profile.full_name
+            user_data["profile_image"] = request.build_absolute_uri(profile.profile_image.url) if profile.profile_image else None
+        except UserProfile.DoesNotExist:
+            user_data["full_name"] = ""
+            user_data["profile_image"] = None
+        
+        # Log successful login
+        log_auth_attempt(
+            username=username,
+            status=AuthAuditLog.STATUS_SUCCESS,
+            request=request,
+            user=user,
+            failure_reason=""
+        )
+        
+        # Return structured response
+        return Response({
+            "message": "Login successful",
+            "tokens": {
+                "access": access_token,
+                "refresh": refresh_token
+            },
+            "user": user_data,
+            "scope": scope_data
+        }, status=status.HTTP_200_OK)
+    
+    def _resolve_user_scope(self, user):
+        """
+        Resolve warehouse scope based on user role.
+        Returns warehouse IDs the user has access to.
+        """
+        scope = {
+            "warehouse_id": None,
+            "managed_warehouses": []
+        }
+        
+        if not user.role:
+            return scope
+        
+        role_name = user.role.name
+        
+        if role_name == Role.ADMIN:
+            # Admin has global access
+            scope["is_global"] = True
+            
+        elif role_name == Role.MANAGER:
+            # Manager: fetch all managed warehouses
+            try:
+                manager = user.manager
+                warehouses = Warehouse.objects.filter(manager=manager).values('id', 'name')
+                scope["managed_warehouses"] = list(warehouses)
+            except Manager.DoesNotExist:
+                pass
+                
+        elif role_name == Role.STAFF:
+            # Staff: fetch assigned warehouse
+            try:
+                staff = user.staff
+                if staff.warehouse:
+                    scope["warehouse_id"] = staff.warehouse.id
+                    scope["warehouse_name"] = staff.warehouse.name
+            except Staff.DoesNotExist:
+                pass
+                
+        elif role_name == Role.VIEWER:
+            # Viewer: typically no specific warehouse assignment
+            # But we can add logic here if needed
+            pass
+        
+        return scope
+
 
 
 # =====================================================

@@ -1,7 +1,8 @@
 from rest_framework.pagination import PageNumberPagination
+from core.constants import DEFAULT_PAGE_SIZE
 
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
+    page_size = DEFAULT_PAGE_SIZE
     page_size_query_param = 'page_size'
     max_page_size = 1000

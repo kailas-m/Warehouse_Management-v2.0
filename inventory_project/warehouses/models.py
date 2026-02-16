@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from core.constants import RequestStatus
 
 
 class Warehouse(models.Model):
@@ -44,15 +45,12 @@ class StaffTransferRequest(models.Model):
     """
     Request to transfer staff from one warehouse to another.
     """
-    STATUS_PENDING = "PENDING"
-    STATUS_APPROVED = "APPROVED"
-    STATUS_REJECTED = "REJECTED"
+    # Use centralized constants
+    STATUS_PENDING = RequestStatus.PENDING
+    STATUS_APPROVED = RequestStatus.APPROVED
+    STATUS_REJECTED = RequestStatus.REJECTED
 
-    STATUS_CHOICES = [
-        (STATUS_PENDING, "Pending"),
-        (STATUS_APPROVED, "Approved"),
-        (STATUS_REJECTED, "Rejected"),
-    ]
+    STATUS_CHOICES = RequestStatus.CHOICES
 
     staff = models.ForeignKey(
         "roles.Staff",  # String reference

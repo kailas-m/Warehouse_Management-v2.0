@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from core.constants import Gender
 
 
 def profile_image_upload_path(instance, filename):
@@ -29,11 +30,8 @@ class UserProfile(models.Model):
     """
     Extended user profile information.
     """
-    GENDER_CHOICES = (
-        ("MALE", "Male"),
-        ("FEMALE", "Female"),
-        ("OTHER", "Other"),
-    )
+    # Use centralized constants
+    GENDER_CHOICES = Gender.CHOICES
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

@@ -1,21 +1,18 @@
 from django.db import models
+from core.constants import UserRole, RequestStatus
 
 
 class Role(models.Model):
     """
     Role definitions for the system.
     """
-    ADMIN = "ADMIN"
-    MANAGER = "MANAGER"
-    STAFF = "STAFF"
-    VIEWER = "VIEWER"
+    # Use centralized constants
+    ADMIN = UserRole.ADMIN
+    MANAGER = UserRole.MANAGER
+    STAFF = UserRole.STAFF
+    VIEWER = UserRole.VIEWER
 
-    NAME_CHOICES = [
-        (ADMIN, "Admin"),
-        (MANAGER, "Manager"),
-        (STAFF, "Staff"),
-        (VIEWER, "Viewer"),
-    ]
+    NAME_CHOICES = UserRole.CHOICES
 
     name = models.CharField(max_length=50, choices=NAME_CHOICES, unique=True)
 
@@ -112,15 +109,12 @@ class ManagerPromotionRequest(models.Model):
     """
     Request to promote a staff member to manager.
     """
-    STATUS_PENDING = "PENDING"
-    STATUS_APPROVED = "APPROVED"
-    STATUS_REJECTED = "REJECTED"
+    # Use centralized constants
+    STATUS_PENDING = RequestStatus.PENDING
+    STATUS_APPROVED = RequestStatus.APPROVED
+    STATUS_REJECTED = RequestStatus.REJECTED
 
-    STATUS_CHOICES = [
-        (STATUS_PENDING, "Pending"),
-        (STATUS_APPROVED, "Approved"),
-        (STATUS_REJECTED, "Rejected"),
-    ]
+    STATUS_CHOICES = RequestStatus.CHOICES
 
     staff = models.ForeignKey(
         Staff,
