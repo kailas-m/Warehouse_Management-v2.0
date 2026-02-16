@@ -1,4 +1,4 @@
-from warehouses.models import Stock, LowStockThreshold
+from inventory.models import Stock, LowStockThreshold
 
 
 def get_low_stock_items():

@@ -1,0 +1,98 @@
+/* Layout Styles - Inherits mostly from globals.css now */
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Sidebar Structure: Fixed Header + Scrollable Nav + Fixed Footer */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar-header {
+  flex-shrink: 0;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Smooth momentum scrolling on iOS */
+  scrollbar-width: thin;
+  /* Firefox */
+  scrollbar-color: #4b5563 transparent;
+  /* Firefox: thumb track */
+}
+
+/* Custom Scrollbar for Webkit (Chrome, Safari, Edge) */
+.sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+.sidebar-footer {
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+}
+
+/* Navigation Groups - Enterprise Style */
+.nav-group {
+  margin-top: 20px;
+}
+
+.nav-group-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  padding: 8px 24px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+/* Logout button in sidebar - Amazon style text link */
+.logout-btn {
+  margin-top: auto;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  color: #aebdbb;
+  /* Amazon sidebar text */
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 400;
+  width: 100%;
+  cursor: pointer;
+  margin-left: 0;
+  border-left: 4px solid transparent;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+}
+
+.logout-btn:hover {
+  background-color: var(--sidebar-hover);
+  color: #ffffff;
+  box-shadow: none;
+  border-color: transparent;
+}

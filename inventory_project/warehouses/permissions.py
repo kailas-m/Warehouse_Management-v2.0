@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from warehouses.models import Role, Staff, Manager
+from roles.models import Role, Staff, Manager
 
 
 class IsAdmin(BasePermission):

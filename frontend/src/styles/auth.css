@@ -1,0 +1,55 @@
+/* Login Styles - Amazon Style */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #FFFFFF;
+}
+
+.login-form {
+    background: white;
+    padding: 24px 26px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 350px;
+    box-shadow: none;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    color: #111;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #a6a6a6;
+    border-top-color: #949494;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5), 0 1px 0 rgba(0, 0, 0, .07) inset;
+}
+
+/* Auth button specific */
+button {
+    width: 100%;
+}
+
+.error-message {
+    color: #c40000;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

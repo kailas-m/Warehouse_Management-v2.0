@@ -1,18 +1,16 @@
 from django.urls import path
 
 from warehouses.views import (
-    # Auth
-    RegisterAPIView,
-
-    # Users
-    UserListAPIView,
-
     # Warehouses
     WarehouseCreateAPIView,
+    WarehouseListAPIView,
+    WarehouseDetailAPIView,
 
     # Products / Stock
     ProductCreateAPIView,
     ProductListAPIView,
+    ProductUpdateAPIView,
+    ProductDeleteAPIView,
     StockListAPIView,
     StockAssignAPIView,
 
@@ -26,36 +24,37 @@ from warehouses.views import (
     TransferApproveAPIView,
     TransferRequestListAPIView,
 
-    # Staff / Manager flows
-    StaffApproveAPIView,
-    ManagerPromotionRequestAPIView,
-    ManagerPromotionApproveAPIView,
-    ManagerPromotionRequestListAPIView,
-    AdminDemoteManagerAPIView,
-    StaffDismissAPIView,
-
-    # Profile
-    UserProfileAPIView,
-    RegisterAPIView,
-    UserListAPIView,
+    # Dashboards & Reports
     AdminDashboardAPIView,
     WarehouseDashboardAPIView,
     StockMovementReportAPIView,
     LowStockThresholdAPIView,
+    WarehouseDeleteValidateAPIView,
+    WarehouseDeleteConfirmAPIView,
+
+    # Staff Transfer
+    StaffTransferRequestListCreateAPIView,
+    StaffTransferApprovalAPIView,
+    StaffTransferRejectAPIView,
+    
+    # Detail Views for Drawer System
+    ProductDetailAPIView,
+    StockDetailAPIView,
+    PurchaseRequestDetailAPIView,
+    TransferRequestDetailAPIView,
+    UserDetailAPIView,
 )
 
 urlpatterns = [
-    # Auth
-    path("auth/register/", RegisterAPIView.as_view(), name="register"),
-
-    # Users
-    path("users/", UserListAPIView.as_view(), name="user-list"),
-
     # Warehouses
     path("warehouses/", WarehouseCreateAPIView.as_view(), name="warehouse-create"),
+    path("warehouses/list/", WarehouseListAPIView.as_view(), name="warehouse-list"),
+    path("warehouses/<int:pk>/", WarehouseDetailAPIView.as_view(), name="warehouse-detail"),
 
     # Products & Stock
     path("products/", ProductCreateAPIView.as_view(), name="product-create"),
+    path("products/<int:pk>/", ProductUpdateAPIView.as_view(), name="product-update"),
+    path("products/<int:pk>/delete/", ProductDeleteAPIView.as_view(), name="product-start-delete"),
     path("products/list/", ProductListAPIView.as_view(), name="product-list"),
     path("stocks/", StockListAPIView.as_view(), name="stock-list"),
     path("stocks/assign/", StockAssignAPIView.as_view(), name="stock-assign"),
@@ -70,24 +69,25 @@ urlpatterns = [
     path("transfer-requests/approve/", TransferApproveAPIView.as_view(), name="transfer-request-approve"),
     path("transfer-requests/list/", TransferRequestListAPIView.as_view(), name="transfer-request-list"),
 
-    # Staff / Manager / Admin flows
-    path("staffs/approve/", StaffApproveAPIView.as_view(), name="staff-approve"),
-    path("managers/request-staff-promotion/", ManagerPromotionRequestAPIView.as_view(), name="manager-promotion-request"),
-    path("manager-promotions/approve/", ManagerPromotionApproveAPIView.as_view(), name="manager-promotion-approve"),
-    path("manager-promotions/list/", ManagerPromotionRequestListAPIView.as_view(), name="manager-promotion-list"),
-    path("admin/demote-manager/", AdminDemoteManagerAPIView.as_view()),
-    path("staffs/dismiss/", StaffDismissAPIView.as_view()),
-
-    # User profile
-    path("profile/", UserProfileAPIView.as_view(), name="user-profile"),
-
     # Dashboards
     path("dashboard/admin/", AdminDashboardAPIView.as_view(), name="dashboard-admin"),
     path("dashboard/warehouse/", WarehouseDashboardAPIView.as_view(), name="dashboard-warehouse"),
 
-
     path("reports/stock-movements/",StockMovementReportAPIView.as_view(),name="stock-movement-report"),
 
     path("low-stock-thresholds/",LowStockThresholdAPIView.as_view(),name="low-stock-thresholds"),
+    path("warehouses/delete/validate/",WarehouseDeleteValidateAPIView.as_view(),name="warehouse-delete-validate"),
+    path("warehouses/delete/confirm/",WarehouseDeleteConfirmAPIView.as_view(),name="warehouse-delete-confirm"),
 
+    # Staff Transfers
+    path("staff-transfers/", StaffTransferRequestListCreateAPIView.as_view(), name="staff-transfer-list-create"),
+    path("staff-transfers/<int:pk>/approve/", StaffTransferApprovalAPIView.as_view(), name="staff-transfer-approve"),
+    path("staff-transfers/<int:pk>/reject/", StaffTransferRejectAPIView.as_view(), name="staff-transfer-reject"),
+    
+    # Detail Endpoints for Drawer System
+    path("products/<int:pk>/detail/", ProductDetailAPIView.as_view(), name="product-detail"),
+    path("stocks/<int:pk>/detail/", StockDetailAPIView.as_view(), name="stock-detail"),
+    path("purchase-requests/<int:pk>/detail/", PurchaseRequestDetailAPIView.as_view(), name="purchase-request-detail"),
+    path("transfer-requests/<int:pk>/detail/", TransferRequestDetailAPIView.as_view(), name="transfer-request-detail"),
+    path("users/<int:pk>/detail/", UserDetailAPIView.as_view(), name="user-detail"),
 ]

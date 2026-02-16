@@ -1,0 +1,4 @@
+Starting Django Setup Debug...
+CWD: D:\wac\wac2\inventory_project
+Django imported.
+Django setup successfully complete!

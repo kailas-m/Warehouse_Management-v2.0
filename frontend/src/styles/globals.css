@@ -1,0 +1,440 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    /* Amazon/AWS Console Colors */
+    --primary-color: #FF9900;
+    /* Amazon Orange (Buttons/Highlights) */
+    --primary-hover: #EC7211;
+    /* Darker Orange */
+    --primary-text: #232F3E;
+    /* Text on primary button (Dark Blue) */
+
+    --secondary-color: #FFFFFF;
+    /* White */
+    --bg-color: #F2F3F3;
+    /* Light Gray Background (AWS style) */
+
+    --sidebar-bg: #232F3E;
+    /* Dark Blue Sidebar */
+    --sidebar-text: #FFFFFF;
+    /* White text on sidebar */
+    --sidebar-hover: #37444F;
+    /* Lighter blue hover */
+
+    --text-color: #16191F;
+    /* Dark Gray/Black Text */
+    --text-secondary: #5D6C7D;
+    /* Muted Text */
+
+    --border-color: #D5DBDB;
+    /* Light border */
+
+    --link-color: #0073BB;
+    /* Amazon Blue Link */
+
+    --success-green: #1D8102;
+    --error-red: #D13212;
+
+    --sidebar-width: 260px;
+    --shadow-sm: 0 1px 1px 0 rgba(0, 28, 36, 0.3), 1px 1px 1px 0 rgba(0, 28, 36, 0.15);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /* Amazon uses system/std fonts mostly */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    text-decoration: none;
+    color: var(--link-color);
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #d13212;
+    /* reddish hover used in some places */
+}
+
+/* Layout */
+.dashboard-layout {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: none;
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    /* Zero padding to flush w/ edges */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #FF9900;
+    /* Amazon logo Orange */
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    background: #19222D;
+    /* Slightly darker header part */
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    border-radius: 0;
+    /* No rounded tabs */
+    transition: background 0.1s;
+    margin-bottom: 0px;
+    color: #d5dbdb;
+    /* Off-white */
+    font-weight: 400;
+    font-size: 0.95rem;
+    margin-left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-left: 4px solid transparent;
+}
+
+.nav-link:hover {
+    background-color: var(--sidebar-hover);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.nav-link.active {
+    background-color: var(--sidebar-hover);
+    color: #fff;
+    border-left-color: var(--primary-color);
+    font-weight: 700;
+}
+
+.content {
+    flex: 1;
+    padding: 2rem 2.5rem;
+    overflow-y: auto;
+}
+
+/* Login / Cards */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #FFFFFF;
+    /* Amazon login is usually white page with centered box */
+}
+
+.login-form {
+    background: white;
+    padding: 20px 26px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    /* Rounded small */
+    width: 350px;
+    box-shadow: none;
+    /* simple border usually */
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    color: #111;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #a6a6a6;
+    border-top-color: #949494;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5), 0 1px 0 rgba(0, 0, 0, .07) inset;
+    transition: border 0.1s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #e77600;
+    box-shadow: 0 0 3px 2px rgba(228, 121, 17, .5);
+}
+
+/* Buttons */
+button {
+    width: auto;
+    padding: 6px 18px;
+    background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+    background-color: #f0c14b;
+    /* Fallback */
+    border: 1px solid;
+    border-color: #a88734 #9c7e31 #846a29;
+    color: #111;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 400;
+    font-family: inherit;
+    font-size: 0.9rem;
+    text-align: center;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+    transition: all 0.1s;
+}
+
+button:hover {
+    background: linear-gradient(to bottom, #f5d78e, #eeb933);
+    border-color: #a88734 #9c7e31 #846a29;
+}
+
+button:active {
+    background: #f0c14b;
+    box-shadow: none;
+    border-color: #a88734 #9c7e31 #846a29;
+}
+
+.login-form button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Utility Classes for Actions */
+.btn-primary {
+    /* Amazon Primary Action (Yellow) */
+    background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+    border-color: #a88734 #9c7e31 #846a29;
+    color: #111;
+}
+
+.btn-secondary {
+    /* Amazon Secondary (Gray/White) */
+    background: linear-gradient(to bottom, #f7f8fa, #e7e9ec);
+    border-color: #adb1b8 #a2a6ac #8d9096;
+    color: #111;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(to bottom, #e7e9ec, #d9dce1);
+}
+
+.btn-danger {
+    /* Red text, white bg mostly, or solid red if drastic */
+    background: linear-gradient(to bottom, #fff0f0, #ffdcdc);
+    border-color: #c00;
+    color: #c00;
+}
+
+.btn-danger:hover {
+    background: #ffebeb;
+}
+
+
+.error-message {
+    color: var(--error-red);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Table overrides */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem !important;
+}
+
+th {
+    background-color: #fafafa;
+    color: #555;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #eaeded !important;
+    padding: 10px 15px !important;
+}
+
+td {
+    color: #333;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eaeded !important;
+    padding: 12px 15px !important;
+    vertical-align: middle;
+}
+
+tr:hover {
+    background-color: #fafafa;
+}
+
+/* Card style helper */
+.card {
+    background: white;
+    border: 1px solid #D5DBDB;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+/* Sub-header Navigation */
+.outisdeMainContainerSubheader {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.outisdeMainContainerSubheader.with_shadow {
+    box-shadow: var(--shadow-sm);
+}
+
+.mainContainerSubheader {
+    width: 100%;
+}
+
+.containerSubheader {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    gap: 20px;
+}
+
+.containerSubheader li {
+    padding: 10px 0;
+}
+
+.link {
+    text-decoration: none;
+    color: var(--text-color);
+    /* Was rgb(39, 50, 57) */
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.link:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.link.active {
+    color: var(--primary-color);
+    /* Highlight active tab */
+    font-weight: 700;
+    background-color: #fff7eb;
+    /* Light orange background */
+}
+
+/* Responsive Sidebar (Mobile/Tablet) */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 60px;
+        /* Shrink sidebar */
+    }
+
+    /* Hide text elements */
+    .sidebar .nav-link span,
+    .sidebar .logout-btn span,
+    .sidebar .user-info span,
+    .sidebar .user-info div {
+        display: none !important;
+    }
+
+    /* Adjust Logo */
+    .logo {
+        padding: 10px;
+        justify-content: center;
+    }
+
+    .logo img {
+        max-height: 40px;
+    }
+
+    /* Center Icons in Nav */
+    .nav-link,
+    .logout-btn {
+        padding: 15px 10px;
+        /* Reduce padding */
+        justify-content: center;
+        /* Center icon */
+    }
+
+    /* Adjust User Info (Show only avatar if possible, or hide) */
+    .user-info {
+        padding: 10px 0;
+        justify-content: center;
+    }
+
+    .user-info a {
+        justify-content: center;
+    }
+
+    /* Adjust Content Padding */
+    .content {
+        padding: 1rem;
+        /* Less padding on mobile */
+    }
+
+    /* Adjust Tables for Mobile (Scrollable) */
+    .card {
+        padding: 10px;
+        overflow-x: auto;
+        /* Enable horizontal scroll for tables */
+    }
+
+    /* Ensure table doesn't break layout */
+}
+
+/* Sticky UI Utilities */
+.sticky-page-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--bg-color);
+    /* Matches page bg */
+    padding-bottom: 1px;
+    /* Visual separation */
+}
+
+.sticky-table-header th {
+    position: sticky;
+    top: var(--header-offset, 0px);
+    z-index: 90;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+}
+
+/* Disable sticky on mobile to prevent crowding */
+@media (max-width: 768px) {
+
+    .sticky-page-header,
+    .sticky-table-header th {
+        position: static !important;
+        top: auto !important;
+    }
+}

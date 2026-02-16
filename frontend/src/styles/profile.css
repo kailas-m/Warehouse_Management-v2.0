@@ -1,0 +1,491 @@
+/* Profile Page Styles - Enterprise Grade */
+
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* Header */
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.profile-header-content {
+    flex: 1;
+}
+
+.profile-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.profile-breadcrumb span:first-child {
+    color: #3b82f6;
+}
+
+.profile-breadcrumb span:first-child:hover {
+    text-decoration: underline;
+}
+
+.profile-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+}
+
+.profile-subtitle {
+    font-size: 1rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.btn-edit-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    color: #475569;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-edit-profile:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+/* Loading & Error States */
+.profile-loading,
+.profile-error {
+    padding: 60px 20px;
+    text-align: center;
+    font-size: 1.125rem;
+    color: #64748b;
+}
+
+.profile-error {
+    color: #dc2626;
+}
+
+/* Content Layout */
+.profile-content {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+}
+
+/* Profile Summary Card */
+.profile-summary-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    height: fit-content;
+}
+
+.profile-avatar-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e2e8f0;
+}
+
+.profile-avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    border: 3px solid #e2e8f0;
+}
+
+.profile-identity {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-username {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+}
+
+.profile-badges {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.role-admin {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.role-manager {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.role-staff {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.role-viewer {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.profile-meta {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.profile-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.profile-meta-item svg {
+    color: #94a3b8;
+}
+
+/* Information Sections */
+.profile-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.info-field p {
+    font-size: 1rem;
+    color: #0f172a;
+    margin: 0;
+}
+
+.info-field p.read-only {
+    color: #64748b;
+    font-style: italic;
+}
+
+.warehouse-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.warehouse-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #475569;
+}
+
+.warehouse-badge svg {
+    color: #64748b;
+}
+
+/* Edit Form */
+.profile-edit-form {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 32px;
+}
+
+.form-section {
+    margin-bottom: 32px;
+}
+
+.form-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.image-upload-section {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.image-preview {
+    flex-shrink: 0;
+}
+
+.image-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-upload:hover {
+    background: #2563eb;
+}
+
+.btn-reset {
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    color: #64748b;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-reset:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+.image-hint {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #0f172a;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.field-hint {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-save {
+    padding: 12px 32px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-save:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.btn-save:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    padding: 12px 32px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover:not(:disabled) {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+.btn-cancel:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .profile-content {
+        grid-template-columns: 1fr;
+    }
+
+    .section-grid,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .profile-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .btn-edit-profile {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .image-upload-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+    }
+}

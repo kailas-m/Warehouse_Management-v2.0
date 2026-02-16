@@ -1,28 +1,74 @@
 from collections import defaultdict
+from datetime import datetime
 from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph,
+    Spacer,
+    PageBreak,
+    KeepTogether,
+)
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from django.http import HttpResponse
 
 
-def generate_stock_movement_pdf(warehouse, movements, start_date, end_date):
+def infer_transaction_type(source, destination):
     """
-    warehouse:
-        - Warehouse instance (manager report)
-        - None (admin combined report)
+    Infer transaction type from source/destination strings.
+    Returns: 'IN', 'OUT', 'ADJ', or 'MOVE'
+    """
+    source_lower = source.lower() if source else ""
+    dest_lower = destination.lower() if destination else ""
 
-    movements keys:
-        date, product, quantity, source, destination, performed_by
+    # Adjustment/Audit
+    if "adjustment" in source_lower or "adjustment" in dest_lower:
+        return "ADJ"
+    if "audit" in source_lower or "audit" in dest_lower:
+        return "ADJ"
+
+    # Purchase (from external vendor)
+    if "vendor" in source_lower or "supplier" in source_lower:
+        return "IN"
+
+    # Sale/Dispatch (to external customer)
+    if "customer" in dest_lower or "dispatch" in dest_lower:
+        return "OUT"
+
+    # Transfer between warehouses
+    if source and destination and source != destination:
+        return "MOVE"
+
+    # Default
+    return "MOVE"
+
+
+def generate_stock_movement_pdf(warehouse, movements, start_date, end_date, user=None):
+    """
+    Generate enterprise-grade Stock Movement Report PDF.
+
+    Args:
+        warehouse: Warehouse instance (manager report) or None (admin combined report)
+        movements: List of dicts with keys: date, product, quantity, source, destination, performed_by
+        start_date: Start date string
+        end_date: End date string
+        user: User instance who generated the report (optional)
     """
 
     # ----------------------------------
     # Prepare grouping & summaries
     # ----------------------------------
     grouped = defaultdict(list)
-    summary = defaultdict(lambda: {"in": 0, "out": 0})
+    summary = defaultdict(lambda: {"in": 0, "out": 0, "count": 0})
 
     for m in movements:
         wh = m["source"] if m["quantity"] < 0 else m["destination"]
         grouped[wh].append(m)
+        summary[wh]["count"] += 1
 
         if m["quantity"] > 0:
             summary[wh]["in"] += m["quantity"]
@@ -33,110 +79,251 @@ def generate_stock_movement_pdf(warehouse, movements, start_date, end_date):
     # File setup
     # ----------------------------------
     filename = (
-        "stock_report_all_warehouses.pdf"
+        "stock_movement_report_all.pdf"
         if warehouse is None
-        else f"stock_report_{warehouse.id}.pdf"
+        else f"stock_movement_report_{warehouse.id}.pdf"
     )
 
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
-    c = canvas.Canvas(response, pagesize=A4)
-    width, height = A4
-    y = height - 40
+    # ----------------------------------
+    # Document setup with platypus
+    # ----------------------------------
+    doc = SimpleDocTemplate(
+        response,
+        pagesize=A4,
+        rightMargin=2 * cm,
+        leftMargin=2 * cm,
+        topMargin=3 * cm,
+        bottomMargin=2.5 * cm,
+    )
+
+    # Styles
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        "CustomTitle",
+        parent=styles["Heading1"],
+        fontSize=18,
+        textColor=colors.HexColor("#1f2937"),
+        spaceAfter=12,
+        alignment=TA_CENTER,
+    )
+    heading_style = ParagraphStyle(
+        "CustomHeading",
+        parent=styles["Heading2"],
+        fontSize=14,
+        textColor=colors.HexColor("#374151"),
+        spaceAfter=6,
+    )
+    normal_style = styles["Normal"]
+
+    # Story (content container)
+    story = []
 
     # ----------------------------------
-    # Title
+    # Header Section
     # ----------------------------------
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(40, y, "Stock Movement Report")
-    y -= 20
+    report_id = f"RPT-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    generated_by = f"{user.username} ({user.role})" if user else "System"
+    scope = warehouse.name if warehouse else "All Warehouses"
 
-    c.setFont("Helvetica", 10)
-    c.drawString(40, y, f"Period: {start_date} → {end_date}")
-    y -= 30
+    story.append(Paragraph("Stock Movement Audit Report", title_style))
+    story.append(Spacer(1, 0.3 * cm))
+
+    # Metadata table
+    metadata = [
+        ["Reporting Period:", f"{start_date} to {end_date}"],
+        ["Generated On:", datetime.now().strftime("%Y-%m-%d %H:%M UTC")],
+        ["Generated By:", generated_by],
+        ["Scope:", scope],
+        ["Reference ID:", report_id],
+    ]
+
+    metadata_table = Table(metadata, colWidths=[4 * cm, 12 * cm])
+    metadata_table.setStyle(
+        TableStyle(
+            [
+                ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+                ("FONTNAME", (1, 0), (1, -1), "Helvetica"),
+                ("FONTSIZE", (0, 0), (-1, -1), 9),
+                ("TEXTCOLOR", (0, 0), (-1, -1), colors.HexColor("#374151")),
+                ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                ("ALIGN", (1, 0), (1, -1), "LEFT"),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+    )
+    story.append(metadata_table)
+    story.append(Spacer(1, 0.8 * cm))
 
     # ----------------------------------
     # Per-warehouse sections
     # ----------------------------------
-    for wh_name, rows in grouped.items():
-        if y < 200:
-            c.showPage()
-            y = height - 40
-
+    for wh_name, rows in sorted(grouped.items()):
         # Warehouse header
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(40, y, f"Warehouse: {wh_name}")
-        y -= 20
+        story.append(Paragraph(f"Warehouse: {wh_name}", heading_style))
+        story.append(Spacer(1, 0.2 * cm))
 
-        # Table header
-        c.setFont("Helvetica-Bold", 9)
-        headers = ["Date", "Product", "Qty", "Source", "Destination", "By"]
-        xs = [40, 110, 230, 280, 360, 450]
+        # Table data
+        table_data = [
+            ["Date/Time", "Type", "Product", "Source/Dest", "Actor", "Quantity"]
+        ]
 
-        for i, h in enumerate(headers):
-            c.drawString(xs[i], y, h)
+        for r in sorted(rows, key=lambda x: x["date"], reverse=True):
+            trans_type = infer_transaction_type(r["source"], r["destination"])
+            qty = r["quantity"]
+            qty_display = f"+{qty}" if qty > 0 else str(qty)
 
-        y -= 12
-        c.line(40, y, width - 40, y)
-        y -= 10
-        c.setFont("Helvetica", 9)
+            # Context-aware source/dest display
+            context = r["destination"] if qty > 0 else r["source"]
 
-        # Rows
-        for r in rows:
-            if y < 80:
-                c.showPage()
-                y = height - 50
+            table_data.append(
+                [
+                    r["date"],
+                    trans_type,
+                    r["product"],
+                    context,
+                    r["performed_by"],
+                    qty_display,
+                ]
+            )
 
-            c.drawString(xs[0], y, r["date"])
-            c.drawString(xs[1], y, r["product"])
-            c.drawString(xs[2], y, str(r["quantity"]))
-            c.drawString(xs[3], y, r["source"])
-            c.drawString(xs[4], y, r["destination"])
-            c.drawString(xs[5], y, r["performed_by"])
-            y -= 14
+        # Create table
+        col_widths = [3 * cm, 1.5 * cm, 5 * cm, 3.5 * cm, 3 * cm, 2 * cm]
+        movement_table = Table(table_data, colWidths=col_widths, repeatRows=1)
+
+        # Table styling
+        movement_table.setStyle(
+            TableStyle(
+                [
+                    # Header row
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1f2937")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, 0), 10),
+                    ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+                    # Data rows
+                    ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+                    ("FONTSIZE", (0, 1), (-1, -1), 9),
+                    ("ALIGN", (0, 1), (0, -1), "LEFT"),  # Date
+                    ("ALIGN", (1, 1), (1, -1), "CENTER"),  # Type
+                    ("ALIGN", (2, 1), (2, -1), "LEFT"),  # Product
+                    ("ALIGN", (3, 1), (3, -1), "LEFT"),  # Source/Dest
+                    ("ALIGN", (4, 1), (4, -1), "LEFT"),  # Actor
+                    ("ALIGN", (5, 1), (5, -1), "RIGHT"),  # Quantity
+                    # Gridlines
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#e5e7eb")),
+                    # Row striping
+                    ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f9fafb")]),
+                    # Padding
+                    ("TOPPADDING", (0, 0), (-1, -1), 6),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 8),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+                ]
+            )
+        )
+
+        story.append(movement_table)
+        story.append(Spacer(1, 0.5 * cm))
 
         # Warehouse summary
-        y -= 10
-        c.setFont("Helvetica-Bold", 9)
-        c.drawString(
-            40,
-            y,
-            f"Summary — Incoming: +{summary[wh_name]['in']} | "
-            f"Outgoing: -{summary[wh_name]['out']} | "
-            f"Net: {summary[wh_name]['in'] - summary[wh_name]['out']}",
+        wh_summary_data = [
+            ["Metric", "Incoming", "Outgoing", "Net Change"],
+            [
+                "Units",
+                f"+{summary[wh_name]['in']:,}",
+                f"-{summary[wh_name]['out']:,}",
+                f"{summary[wh_name]['in'] - summary[wh_name]['out']:+,}",
+            ],
+        ]
+
+        summary_table = Table(wh_summary_data, colWidths=[4 * cm, 4 * cm, 4 * cm, 4 * cm])
+        summary_table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#f3f4f6")),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 9),
+                    ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#d1d5db")),
+                    ("TOPPADDING", (0, 0), (-1, -1), 6),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                ]
+            )
         )
-        y -= 30
+
+        story.append(summary_table)
+        story.append(Spacer(1, 1 * cm))
 
     # ----------------------------------
     # Overall summary (admin only)
     # ----------------------------------
-    if warehouse is None:
-        c.showPage()
-        y = height - 40
+    if warehouse is None and len(grouped) > 1:
+        story.append(PageBreak())
+        story.append(Paragraph("Overall Summary", title_style))
+        story.append(Spacer(1, 0.5 * cm))
 
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(40, y, "Overall Summary")
-        y -= 25
+        overall_data = [["Warehouse", "Total In", "Total Out", "Net Flow", "Activity Count"]]
 
-        c.setFont("Helvetica-Bold", 9)
-        c.drawString(40, y, "Warehouse")
-        c.drawString(250, y, "Incoming")
-        c.drawString(330, y, "Outgoing")
-        c.drawString(410, y, "Net")
-        y -= 10
-        c.line(40, y, width - 40, y)
-        y -= 10
-
-        c.setFont("Helvetica", 9)
-        for wh, s in summary.items():
+        for wh, s in sorted(summary.items()):
             net = s["in"] - s["out"]
-            c.drawString(40, y, wh)
-            c.drawString(250, y, f"+{s['in']}")
-            c.drawString(330, y, f"-{s['out']}")
-            c.drawString(410, y, str(net))
-            y -= 14
+            overall_data.append(
+                [
+                    wh,
+                    f"+{s['in']:,}",
+                    f"-{s['out']:,}",
+                    f"{net:+,}",
+                    str(s["count"]),
+                ]
+            )
 
-    c.showPage()
-    c.save()
+        overall_table = Table(overall_data, colWidths=[5 * cm, 3 * cm, 3 * cm, 3 * cm, 3 * cm])
+        overall_table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1f2937")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 9),
+                    ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                    ("ALIGN", (1, 0), (-1, -1), "CENTER"),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#e5e7eb")),
+                    ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f9fafb")]),
+                    ("TOPPADDING", (0, 0), (-1, -1), 6),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                ]
+            )
+        )
+
+        story.append(overall_table)
+
+    # ----------------------------------
+    # Footer function
+    # ----------------------------------
+    def add_page_number(canvas, doc):
+        canvas.saveState()
+        canvas.setFont("Helvetica", 8)
+        canvas.setFillColor(colors.HexColor("#6b7280"))
+
+        # Page number
+        page_num = f"Page {doc.page} of {doc.page}"
+        canvas.drawRightString(A4[0] - 2 * cm, 1.5 * cm, page_num)
+
+        # Confidentiality notice
+        canvas.drawString(2 * cm, 1.5 * cm, "INTERNAL USE ONLY - PROPRIETARY")
+
+        # Disclaimer
+        canvas.setFont("Helvetica", 7)
+        disclaimer = "This report is generated from immutable system records. Any manual alteration invalidates this document."
+        canvas.drawCentredString(A4[0] / 2, 1 * cm, disclaimer)
+
+        canvas.restoreState()
+
+    # ----------------------------------
+    # Build PDF
+    # ----------------------------------
+    doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
+
     return response

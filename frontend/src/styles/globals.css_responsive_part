@@ -1,0 +1,55 @@
+/* Responsive Sidebar (Mobile/Tablet) */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 60px; /* Shrink sidebar */
+    }
+
+    /* Hide text elements */
+    .sidebar .nav-link span,
+    .sidebar .logout-btn span,
+    .sidebar .user-info span,
+    .sidebar .user-info div {
+        display: none !important;
+    }
+
+    /* Adjust Logo */
+    .logo {
+        padding: 10px;
+        justify-content: center;
+    }
+    .logo img {
+        max-height: 40px;
+    }
+
+    /* Center Icons in Nav */
+    .nav-link, .logout-btn {
+        padding: 15px 10px; /* Reduce padding */
+        justify-content: center; /* Center icon */
+    }
+
+    /* Adjust User Info (Show only avatar if possible, or hide) */
+    .user-info {
+        padding: 10px 0;
+        justify-content: center;
+    }
+    
+    .user-info a {
+        justify-content: center;
+    }
+
+    /* Adjust Content Padding */
+    .content {
+        padding: 1rem; /* Less padding on mobile */
+    }
+
+    /* Adjust Tables for Mobile (Scrollable) */
+    .card {
+        padding: 10px;
+        overflow-x: auto; /* Enable horizontal scroll for tables */
+    }
+    
+    /* Ensure table doesn't break layout */
+    table {
+        min-width: 600px; /* Force scroll */
+    }
+}

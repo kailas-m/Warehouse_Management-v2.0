@@ -1,0 +1,2 @@
+Resolved /api/auth/login/ to token_obtain_pair
+View: CustomTokenObtainPairView

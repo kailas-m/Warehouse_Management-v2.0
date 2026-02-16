@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
-from warehouses.models import UserProfile
+from accounts.models import UserProfile
 
 User = get_user_model()
 
@@ -16,7 +16,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 from django.db.models.signals import pre_save
 
 
-from warehouses.models import Stock, LowStockThreshold
+from inventory.models import Stock, LowStockThreshold
 from warehouses.services.low_stock import get_low_stock_items
 from warehouses.services.email_alerts import send_low_stock_email
 

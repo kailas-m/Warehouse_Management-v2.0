@@ -1,0 +1,9 @@
+Starting import test...
+ImportError: No module named 'django'
+Sys Path:
+D:\wac\wac2\inventory_project
+C:\Users\kaila\AppData\Local\Programs\Python\Python311\python311.zip
+C:\Users\kaila\AppData\Local\Programs\Python\Python311\DLLs
+C:\Users\kaila\AppData\Local\Programs\Python\Python311\Lib
+C:\Users\kaila\AppData\Local\Programs\Python\Python311
+C:\Users\kaila\AppData\Local\Programs\Python\Python311\Lib\site-packages

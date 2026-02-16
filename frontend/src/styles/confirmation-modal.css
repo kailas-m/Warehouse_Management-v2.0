@@ -1,0 +1,125 @@
+.confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.confirmation-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+}
+
+.confirmation-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.confirmation-close:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.confirmation-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: #f59e0b;
+}
+
+.confirmation-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 12px 0;
+    text-align: center;
+}
+
+.confirmation-message {
+    font-size: 1rem;
+    color: #64748b;
+    margin: 0 0 28px 0;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.confirmation-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.confirmation-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 100px;
+}
+
+.confirmation-btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.confirmation-btn-cancel:hover {
+    background: #e2e8f0;
+}
+
+.confirmation-btn-confirm {
+    background: #ef4444;
+    color: white;
+}
+
+.confirmation-btn-confirm:hover {
+    background: #dc2626;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

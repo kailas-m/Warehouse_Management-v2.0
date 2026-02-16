@@ -1,0 +1,210 @@
+/* Threshold Panel - Professional Side Drawer */
+
+/* Overlay/Backdrop */
+.threshold-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Side Panel Container */
+.threshold-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 100%;
+    max-width: 480px;
+    background-color: #ffffff;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.threshold-panel.open {
+    transform: translateX(0);
+}
+
+/* Panel Header */
+.threshold-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    background-color: #ffffff;
+}
+
+.threshold-header h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.threshold-close-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.threshold-close-btn:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+.threshold-close-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Panel Body - Scrollable */
+.threshold-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+/* Form Styles */
+.threshold-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.threshold-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.threshold-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.threshold-label .required {
+    color: #dc2626;
+    margin-left: 2px;
+}
+
+.threshold-input,
+.threshold-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #111827;
+    background-color: #ffffff;
+    transition: all 0.2s;
+}
+
+.threshold-input:focus,
+.threshold-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.threshold-input:disabled,
+.threshold-select:disabled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.threshold-input.error,
+.threshold-select.error {
+    border-color: #dc2626;
+}
+
+.threshold-input.error:focus,
+.threshold-select.error:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.threshold-error-text {
+    font-size: 0.75rem;
+    color: #dc2626;
+    margin-top: 4px;
+}
+
+.threshold-help-text {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* Panel Footer */
+.threshold-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    flex-shrink: 0;
+}
+
+.threshold-btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.threshold-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.threshold-btn-cancel {
+    background-color: #ffffff;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.threshold-btn-cancel:hover:not(:disabled) {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.threshold-btn-submit {
+    background-color: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.threshold-btn-submit:hover:not(:disabled) {
+    background-color: #2563eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .threshold-panel {
+        max-width: 100%;
+    }
+}

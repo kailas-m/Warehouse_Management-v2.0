@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG") == "True"
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -45,7 +45,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    # New multi-app architecture
+    'core',
+    'accounts',
+    'roles',
     'warehouses',
+    'inventory',
+    'purchases',
+    'transfers',
+    'reports',
+    'dashboard',
+    'notifications',
+    'audit',
+    # CORS
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -56,8 +69,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'inventory_project.urls'
 
 TEMPLATES = [
@@ -111,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-AUTH_USER_MODEL = "warehouses.User"
+AUTH_USER_MODEL = "accounts.User"
 
 
 # Internationalization

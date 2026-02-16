@@ -258,6 +258,33 @@ Generates a PDF report of stock movements.
 
 ---
 
+## 🔍 10. Entity Details (Drawer Support)
+
+New comprehensive read-only endpoints designed for the UI drawer system.
+
+### **Detailed View**
+**GET** `/api/{entity}/{id}/detail/`
+
+Supported Entities:
+*   `products` - Includes stock summary
+*   `stocks` - Includes warehouse & product info
+*   `purchase-requests` - Includes approval history
+*   `transfer-requests` - Includes approval history
+*   `users` - Includes profile & role assignments
+
+**Response Example (Stock):**
+```json
+{
+  "id": 101,
+  "product": { "id": 1, "name": "Rice Bag", "sku": "RIC-001" },
+  "warehouse": { "id": 2, "name": "North Warehouse" },
+  "quantity": 500,
+  "last_updated": "2023-10-25T10:00:00Z"
+}
+```
+
+---
+
 ## ⚠️ Common Error Codes
 
 | Code | Meaning |
